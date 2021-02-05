@@ -8,7 +8,7 @@
   }
   #chart-div {
     width: 90vw;
-    height: 60vh;
+    height: 65vh;
     margin: 25px auto;
   }
 }
@@ -16,6 +16,7 @@
 /* Phone media */
 @media (max-width: 576px) {
   h1.title {
+    font-size: 1.65rem;
     text-align: center;
     margin: 30px auto;
   }

@@ -15,6 +15,8 @@
       <button type="button" class="btn btn-primary" id="btn-create" data-toggle="modal" data-target="#modal-open">Create new position</button>
     </div>
 
+    <br>
+
     {% if stocks.open %}
 
 
@@ -33,7 +35,7 @@
           <th>Close</th>
         </thead>
 
-        {% for name, data in stocks.open.items %}
+        {% for name, data in stocks.open.items reversed %}
 
         <tr class="{{ data.6 }}">
           <td>{{ name }}</td>
@@ -84,7 +86,7 @@
           <th>P/L (%)</th>
         </thead>
 
-        {% for name, data in stocks.closed.items %}
+        {% for name, data in stocks.closed.items reversed %}
         <tr class="{{ data.7 }}">
           <td>{{ name }}</td>
           <td class="colour">{{ data.0 }}</td>
