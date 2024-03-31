@@ -51,6 +51,7 @@ class CurrencyRates:
 
     def _cache(self, rates):
         """Write exchange rates to cache."""
+        self.CACHE['path'].parent.mkdir(parents=True, exist_ok=True)
         with open(self.CACHE['path'], "w") as f:
             json.dump(rates, f)
 
