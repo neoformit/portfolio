@@ -1,15 +1,27 @@
 """Functions to handle currency exchange."""
 
+import json
 import requests
+import time
 from django.conf import settings
 
 
 class CurrencyRates:
     """Fetch current exchange rates for USD conversion."""
 
+    CACHE = settings.CACHE['fx']
     ENDPOINT = "http://api.exchangeratesapi.io/v1/latest"
 
     def __init__(self):
+        """Load rates from cache or fetch if expired."""
+        self.rates = self._load_cache() or self._fetch_rates()
+
+    def get_rate(self, currency):
+        """Get conversion rate from USD to given currency."""
+        usd = self.rates['USD']
+        return self.rates[currency] / usd
+
+    def _fetch_rates(self):
         """Create request and fetch."""
         url = (
             f"{self.ENDPOINT}?access_key={settings.EXCHANGERATESAPI_KEY}"
@@ -20,37 +32,47 @@ class CurrencyRates:
         response = requests.get(url)
         if response.status_code != 200:
             raise ValueError(
-                "FX API request refused (https://api.exchangeratesapi.io)"
+                f"FX API request refused ({self.ENDPOINT})"
                 f" (HTTP status {response.status_code})"
             )
-        self.rates = response.json()['rates']
+        rates = response.json()['rates']
+        self._cache(rates)
+        return rates
 
-    def get_rate(self, currency):
-        """Get conversion rate from USD to given currency."""
-        usd = self.rates['USD']
-        return self.rates[currency] / usd
+    def _load_cache(self):
+        """Read exchange rates from cache if not expired."""
+        if (
+            self.CACHE['path'].exists()
+            and self.CACHE['path'].stat().st_mtime
+            > time.time() - self.CACHE['expiry_seconds']
+        ):
+            with open(self.CACHE['path'], "r") as f:
+                return json.load(f)
+
+    def _cache(self, rates):
+        """Write exchange rates to cache."""
+        with open(self.CACHE['path'], "w") as f:
+            json.dump(rates, f)
 
 
-def USD_to_USD(usd):
+def usd_to_usd(usd):
     """Blank function to return USD unaltered."""
     return round(usd, 2)
 
 
-def GBX_to_USD(pence):
+def gbx_to_usd(pence):
     """Convert GBP pence to USD."""
-    c = CurrencyRates()
-    rate = c.get_rate('GBP')
-    return round((pence / 100) / rate, 2)
+    return gbp_to_usd(pence / 100)
 
 
-def GBP_to_USD(gbp):
+def gbp_to_usd(gbp):
     """Convert GBP to USD."""
     c = CurrencyRates()
     rate = c.get_rate('GBP')
     return round(gbp / rate, 2)
 
 
-def AUD_to_USD(aud):
+def aud_to_usd(aud):
     """Convert AUD to USD."""
     c = CurrencyRates()
     rate = c.get_rate('AUD')
@@ -58,8 +80,8 @@ def AUD_to_USD(aud):
 
 
 exchange = {
-    "USD": USD_to_USD,
-    "GBX": GBX_to_USD,
-    "GBP": GBP_to_USD,
-    "AUD": AUD_to_USD,
+    "USD": usd_to_usd,
+    "GBX": gbx_to_usd,
+    "GBP": gbp_to_usd,
+    "AUD": aud_to_usd,
 }

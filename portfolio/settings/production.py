@@ -1,6 +1,7 @@
 """Portfolio production settings."""
 
-import os
+# flake8: noqa
+
 from .base import *
 
 DEBUG = False
@@ -38,7 +39,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'maxBytes': 10000000,  # 10MB ~ 200k rows
             'backupCount': 5,
-            'filename': os.path.join(BASE_DIR, 'portfolio/logs/main.log'),
+            'filename': BASE_DIR / 'portfolio/logs/main.log',
             'formatter': 'verbose',
         },
         'error_file': {
@@ -47,7 +48,7 @@ LOGGING = {
             'class': 'logging.handlers.RotatingFileHandler',
             'maxBytes': 10000000,  # 10MB ~ 200k rows
             'backupCount': 5,
-            'filename': os.path.join(BASE_DIR, 'portfolio/logs/error.log'),
+            'filename': BASE_DIR /'portfolio/logs/error.log',
             'formatter': 'verbose',
         },
         'console': {
@@ -64,8 +65,4 @@ LOGGING = {
     },
 }
 
-STATIC_ROOT = os.path.join(
-    BASE_DIR,
-    'portfolio',
-    'static',
-)
+STATIC_ROOT = BASE_DIR / 'portfolio/static'
