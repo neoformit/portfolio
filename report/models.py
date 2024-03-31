@@ -156,6 +156,8 @@ class Position(models.Model):
 
     def update(self):
         """Update the model with today's data."""
+        if not finance.confirm_stock_code(self.stock_code):
+            return
         close = finance.fetch_close(self)
 
         if close is None:
