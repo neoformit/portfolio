@@ -5,6 +5,8 @@ from datetime import date, timedelta
 import pandas_datareader as pdr
 from pandas_datareader._utils import RemoteDataError
 
+import yfinance as yf
+
 from . import currency
 from .timing import Stopwatch
 
@@ -24,11 +26,11 @@ def fetch_close(position, fetch_raw=False):
     print("Date from:", date_from.strftime('%Y-%m-%d'))
     print("Date today:", date.today().strftime('%Y-%m-%d'))
 
-    print(f"Time comparison took {sw.lap()} sec")
-    dfs = pdr.get_data_yahoo(
-        position.stock_code,
-        start=date_from,
-        end=date.today()
+    days = (date.today() - date_from).days
+    dfs = yf.download(
+        tickers=position.stock_code,
+        period=f"{days}d",
+        interval="1d",
     )
     print(f"Fetched data in {sw.lap()} sec")
     if fetch_raw:
@@ -164,11 +166,11 @@ def format_for_render(positions):
 def confirm_stock_code(stock_code):
     """Assert that API knows this ticker."""
     try:
-        pdr.get_data_yahoo(
-            stock_code,
-            start=(date.today() - timedelta(days=7)),
-            end=date.today(),
+        dfs = yf.download(
+            tickers=stock_code,
+            period="2d",
+            interval="1d",
         )
-    except RemoteDataError:
+    except Exception:
         return False
     return True
