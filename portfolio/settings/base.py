@@ -1,18 +1,24 @@
 """Portfolio app base settings."""
 
-import os
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = 'd%g0d9fu40b=5w4=8pi^)5g#b!@$tka1wc9gcgl^$rep8w9rsn'
-DEBUG = False
+DEBUG = True
 
 EXCHANGERATESAPI_KEY = "eee06b9528de8fa294654541cc32181a"
 
 # Price trend notification settings (not working)
 WATCH_DAYS = 10     # Check change over last X days
 LOSS_THRESHOLD = 2  # Report losses > X%
+
+CACHE = {
+    'fx': {
+        'path': BASE_DIR / 'cache/fx.json',
+        'expiry_seconds': 86400,
+    }
+}
 
 # Application definition
 INSTALLED_APPS = [

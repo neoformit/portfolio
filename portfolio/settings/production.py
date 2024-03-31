@@ -1,5 +1,7 @@
 """Portfolio production settings."""
 
+# flake8: noqa
+
 from .base import *
 
 DEBUG = False
@@ -21,8 +23,4 @@ DATABASES = {
     }
 }
 
-STATIC_ROOT = os.path.join(
-    BASE_DIR,
-    'portfolio',
-    'static',
-)
+STATIC_ROOT = BASE_DIR / 'portfolio/static'

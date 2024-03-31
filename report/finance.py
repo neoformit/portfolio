@@ -76,7 +76,7 @@ def format_for_render(positions):
         return '$%s,%s.%s' % (x[:-3], x[-3:], y)
 
     sw = Stopwatch()
-    print(f"Formatting stocks for render...")
+    print("Formatting stocks for render...")
     open_pl_usd = 0
     closed_pl_usd = 0
     open_init_usd = 0
